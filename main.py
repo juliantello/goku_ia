@@ -94,6 +94,9 @@ class Main:
                         elif event.key == pygame.K_a:
                             print("Alg. Amplitud ejecutado")
                             self.amplitud()
+                        elif event.key == pygame.K_v:
+                            print("Alg. Avara ejecutado")
+                            self.avara()    
                 except:
                     print("end")    
                     
@@ -208,6 +211,37 @@ class Main:
             if  bandera: 
                 solucionado = True
                 #print(self.goals_adquired,"father positions", n.get_fathers_positions())
+                return self.show_route(n.get_fathers())
+            else:
+                self.expanded_nodes.append(n)
+                if (n.can_move(self.data, 'right')):
+                    nodes.append(n.make_child_node('right'))
+                if (n.can_move(self.data, 'up')):
+                    nodes.append(n.make_child_node('up'))
+                if (n.can_move(self.data, 'left')):
+                    nodes.append(n.make_child_node('left'))
+                if (n.can_move(self.data, 'down')):
+                    nodes.append(n.make_child_node('down'))
+    
+    def avara(self):
+        nodes = []
+        initial_node = Node(self.robot_position, None)
+        nodes.append(initial_node)
+        solucionado = False
+
+        while not solucionado:
+            if not nodes:
+                raise AttributeError  # Fallo
+            n = nodes.pop(0)
+            bandera = False
+            """ valida si estamos en un nodo meta y ya pasamos por el otro... de la forma como esta solo funciona con dos metas"""
+            if (n.position == self.goal_position[0] and self.goal_position[1] in n.get_fathers_positions()):
+                bandera = True
+            if (n.position == self.goal_position[1] and self.goal_position[0] in n.get_fathers_positions()):
+                bandera = True
+
+            if bandera:
+                solucionado = True
                 return self.show_route(n.get_fathers())
             else:
                 self.expanded_nodes.append(n)
